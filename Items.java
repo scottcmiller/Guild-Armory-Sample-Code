@@ -61,21 +61,19 @@ public class Items{
 			
 			if(strCompare != 0) 
 			{
-				System.out.println("Item: " + i1.getName() + " | Comparing to: " + i2.getName() + " | Result: " + strCompare + " | OUTER IF");
 				return strCompare;
-			}else if(strCompare == 0 && !i1.isUnique_name()) 
+			}
+			else if(strCompare == 0 && !i1.isUnique_name()) 
 			{
-				System.out.println("Item: " + i1.getName() + " | Comparing to: " + i2.getName() + " | Result: " + strCompare + " | INNER ELSE IF");
 				if(i2.getReqclass().isEmpty() || i2.getReqclass().isEmpty()) 
 				{
 					throw new ItemNeedsClassException();
 				}else 
 				{
-					System.out.println("Item: " + i1.getName() + " | Comparing to: " + i2.getName() + " | Result: " + strCompare + " | INNER ELSE");
 					return i1.getReqclass().compareToIgnoreCase(i2.getReqclass());
 				}	
-			}else {
-				System.out.println("Item: " + i1.getName() + " | Comparing to: " + i2.getName() + " | Result: " + strCompare + " | OUTER ELSE");
+			}else 
+			{
 				return strCompare;
 			}
 			//If strings are equal, check id's
@@ -238,7 +236,8 @@ public class Items{
 			
 			while(rs.next()) {
 				insertUniqueItemOnLoad(new Item(rs.getString(1), rs.getInt(2), rs.getString(3), rs.getString(4), 
-												rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9) > 0 ? true : false));
+								rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), 
+								rs.getInt(9) > 0 ? true : false));
 				items_by_name.sort(c_name);
 			}
 		}catch(Exception e) {
@@ -246,7 +245,8 @@ public class Items{
 		}
 		
 		stopwatch.stop();
-		System.out.println("..." + items_by_id.size() + " items loaded in: " + stopwatch.elapsed(TimeUnit.SECONDS) + " SECONDS\n");
+		System.out.println("..." + items_by_id.size() + " items loaded in: " + 
+				   stopwatch.elapsed(TimeUnit.SECONDS) + " SECONDS\n");
 	}
 	
 	private static void insertUniqueItem(Item item) {
@@ -314,44 +314,6 @@ public class Items{
 	public static class ItemNeedsClassException extends RuntimeException{
 		public ItemNeedsClassException() {
 			super();
-		}
-	}
-	
-	public static void main(String[] args) throws InterruptedException 
-	{
-		//Stopwatch startTime = Stopwatch.createStarted();
-		
-		//startTime.stop();
-		
-		//System.out.println("Items loaded in: " + startTime.elapsed(TimeUnit.NANOSECONDS) + " MILLISECONDS");
-		
-		Stopwatch startTime = Stopwatch.createStarted();
-		
-		//printNameAr();
-		
-		Item test = Items.getItem("Circlet of Prophecy", "PRIEST");
-		
-		
-		startTime.stop();
-		
-		System.out.println("Found " + test.getName() + " in: " + startTime.elapsed(TimeUnit.NANOSECONDS) + " NANOSECONDS");
-		
-		try {
-			
-			Statement stmt = SingletonConnection.getConnection().createStatement();
-			startTime = Stopwatch.createStarted();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM itemDB WHERE item_name = 'Circlet of Prophecy'");
-			startTime.stop();
-			
-			if(rs.next()) {
-				test = new Item(rs.getString(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8));
-				
-				System.out.println("Found " + test.getName() + " in: " + startTime.elapsed(TimeUnit.NANOSECONDS) + " NANOSECONDS");
-			}
-			
-			
-		}catch(Exception e) {
-			
 		}
 	}
 }
