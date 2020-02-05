@@ -53,57 +53,40 @@ public class Items{
 	 * the method invoking the Comparator that it needs to re-invoke it with items that
 	 * have their req_class values set.<br></br>
 	 */
-	private static Comparator<Item> c_name_verbose = new Comparator<Item>() {
-		public int compare(Item i1, Item i2) 
-		{
-			
-			int strCompare = i1.getName().compareToIgnoreCase(i2.getName());
-			
-			if(strCompare != 0) 
-			{
-				return strCompare;
-			}
-			else if(strCompare == 0 && !i1.isUnique_name()) 
-			{
-				if(i2.getReqclass().isEmpty() || i2.getReqclass().isEmpty()) 
-				{
-					throw new ItemNeedsClassException();
-				}else 
-				{
-					return i1.getReqclass().compareToIgnoreCase(i2.getReqclass());
-				}	
-			}else 
-			{
-				return strCompare;
-			}
-			//If strings are equal, check id's
-			//Probably should be throwing error to make sure search w/ reqclass is being used
-		}
-	};
 	
 	private static Comparator<Item> c_name = new Comparator<Item>() {
-		public int compare(Item i1, Item i2) 
-		{
-			
-			int strCompare = i1.getName().compareToIgnoreCase(i2.getName());
-			
-			if(strCompare != 0) 
+		
+			public int compare(Item i1, Item i2) 
 			{
-				return strCompare;
-			}else if(strCompare == 0 && !i1.isUnique_name()) 
-			{
-				if(i2.getReqclass().isEmpty() || i2.getReqclass().isEmpty()) 
+				try {
+				int strCompare = i1.getName().compareToIgnoreCase(i2.getName());
+				
+				if(strCompare != 0) 
 				{
-					throw new ItemNeedsClassException();
-				}else 
+					return strCompare;
+				}else if(strCompare == 0 && !i1.isUnique_name()) 
 				{
-					return i1.getReqclass().compareToIgnoreCase(i2.getReqclass());
-				}	
-			}else {
-				return strCompare;
+					if(i2.getReqclass().isEmpty() || i2.getReqclass().isEmpty()) 
+					{
+						throw new ItemNeedsClassException();
+					}else 
+					{
+						return i1.getReqclass().compareToIgnoreCase(i2.getReqclass());
+					}	
+				}else {
+					return strCompare;
+				}
+				//If strings are equal, check id's
+				//Probably should be throwing error to make sure search w/ reqclass is being used
+				}catch(Exception e) {
+					e.printStackTrace();
+					System.out.println(i1.toString());
+					System.out.println(i2.toString());
+					return -1;
+					
+					
 			}
-			//If strings are equal, check id's
-			//Probably should be throwing error to make sure search w/ reqclass is being used
+		
 		}
 	};
 	
@@ -124,6 +107,7 @@ public class Items{
 		ItemInfo info = new ItemInfo();
 		
 		if(!name.equals("")) {
+			System.out.println(name);
 			int index = -1;
 			boolean needsClass = false;
 			
@@ -163,7 +147,8 @@ public class Items{
 		ItemInfo info = new ItemInfo();
 		
 		if(!name.equals("")) {
-			int index = search(name, char_class, false);
+			System.out.println(name);
+			int index = search(name, char_class);
 			
 			//Handle reqclass being thrown
 			item = findNameByIndex(index);
@@ -236,8 +221,7 @@ public class Items{
 			
 			while(rs.next()) {
 				insertUniqueItemOnLoad(new Item(rs.getString(1), rs.getInt(2), rs.getString(3), rs.getString(4), 
-								rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), 
-								rs.getInt(9) > 0 ? true : false));
+												rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9) > 0 ? true : false));
 				items_by_name.sort(c_name);
 			}
 		}catch(Exception e) {
@@ -245,8 +229,7 @@ public class Items{
 		}
 		
 		stopwatch.stop();
-		System.out.println("..." + items_by_id.size() + " items loaded in: " + 
-				   stopwatch.elapsed(TimeUnit.SECONDS) + " SECONDS\n");
+		System.out.println("..." + items_by_id.size() + " items loaded in: " + stopwatch.elapsed(TimeUnit.SECONDS) + " SECONDS\n");
 	}
 	
 	private static void insertUniqueItem(Item item) {
@@ -289,11 +272,10 @@ public class Items{
 		return index;
 	}
 	
-	private static int search(String name, String char_class, boolean verbose) {
+	private static int search(String name, String char_class) {
 		int index;
 		
-		if(!verbose) index = Collections.binarySearch(items_by_name, new Item(name), c_name);
-		else index = Collections.binarySearch(items_by_name, new Item(name), c_name_verbose);
+		index = Collections.binarySearch(items_by_name, new Item(name, char_class), c_name);
 		
 		return index;
 	}
@@ -315,5 +297,40 @@ public class Items{
 		public ItemNeedsClassException() {
 			super();
 		}
+	}
+	
+
+	private static void UniqueNames() {
+		try {
+			Statement stmt = SingletonConnection.getConnection().createStatement();
+			
+			for(Item i : items_by_id) {
+				if(!i.getReqclass().equals("")) {
+					ArrayList<Item> items = new ArrayList<Item>();
+					for( Item f : items_by_id) {
+						if(i.getName().equalsIgnoreCase(f.getName())) {
+							items.add(f);
+						}
+					}
+					if(items.size() > 1) {
+						System.out.println(items.get(0).getName() + " is not a unique name! " + items.size() + " instances exist! Updating unique_name column...");
+						for(Item k: items) {
+							stmt.executeUpdate("UPDATE itemDB SET unique_name = 0 WHERE item_id = " + k.getId() + ";");
+							items_by_id.get(search(k.getId())).setUnique_name(false);
+							System.out.println("Item ID: " + k.getId() + " has been updated!");
+						}
+						
+					}
+					items = null;
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
