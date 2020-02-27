@@ -9,4 +9,4 @@ Raid leaders can create raid rosters, track loot, and see player progress in rea
 **These files are a very small portion of the project's non-critical code, but give insight into its innerworkings**
 
 Check the Screenshots folder to see how private discord desicion trees function and previews of the information that can be auto generated into reports via Google Sheets.  
-*Note: any public channel commands are automaking pruded during the Bot's response to keep channels tidy, so the triggering commands are not visible in screenshots.*
+*Note: any public channel commands are automatically pruded during the Bot during its response to keep channels tidy, so the triggering commands are not visible in screenshots.*
