@@ -1,4 +1,4 @@
-# Sample-Code
+# Guild Armory Sample-Code
 **Code Snippets from current project in developement: Guild Armory**
 
 Guild Armory is in active development and not currently open source.
