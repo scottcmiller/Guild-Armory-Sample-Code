@@ -14,13 +14,17 @@ package me.scmiller.guildarmory.Discord.Commands;
  * @author &#064scottc_miller
  *
  */
-public class CommandState {
+public class CommandState 
+{
 	/** Value used to end command. Default is -1. */
 	public final int CLOSE; 
+	
 	/** Value of last state.  State will never be > FINAL_STATE*/
 	public final int FINAL_STATE;
+	
 	/** Value of initial state. Default is 0 */
 	public final int FIRST_STATE;  
+	
 	/** Offset between {@link #FIRST_STATE} and 0 */
 	private final int ARRAY_OFFSET;
 	
