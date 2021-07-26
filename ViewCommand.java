@@ -29,13 +29,12 @@ import me.scmiller.guildarmory.SingletonConnection;
  * 
  * TODO: Link Guild's Armory Google Sheet in Title when fully integrated.
  * 
- * @author &#064scottc_miller
  */
 
 public class ViewCommand extends Command {
-	
-	public ViewCommand() {
-		
+
+	public ViewCommand() 
+	{
 		super.name      = "View";
 		super.help      = "Returns armory info on a character";
 		super.arguments = "[character's name]";
