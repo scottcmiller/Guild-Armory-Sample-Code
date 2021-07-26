@@ -78,7 +78,6 @@ public class UpdateArmoryNew extends Command{
 	
 	/**
 	 * Prompts User to sumbit their Classic Armory string
-	 * @author &#064scottc_miller
 	 *
 	 */
 	public class UACommandOne implements SubCommand
@@ -104,7 +103,6 @@ public class UpdateArmoryNew extends Command{
 	 * Requests User's subclass if they are not already in the guild roster.  Then submits their info to both the roster as a
 	 * new entry and the armory table.
 	 * 
-	 * @author &#064scottc_miller
 	 *
 	 */
 	public class UACommandTwo implements SubCommand
